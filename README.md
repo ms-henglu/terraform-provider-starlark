@@ -1,23 +1,65 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# Terraform Provider Starlark
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+The `starlark` provider offers a set of functions that allow you to execute [Starlark](https://github.com/bazelbuild/starlark) (a dialect of Python) scripts within your Terraform configuration. This enables you to perform complex data transformations and logic that are not natively supported by Terraform functions.
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+## Features
 
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
+* **Starlark Execution**: Inspect and control data flow with Python-like syntax using the `eval` function.
+* **Deterministic**: Operations are deterministic and side-effect free, ideal for Infrastructure-as-Code.
+* **Zero Dependencies**: Simply include the script in your configuration or load it from a file.
 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
+## Example Usage
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+### Basic Calculation
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+```terraform
+terraform {
+  required_providers {
+    starlark = {
+      source = "ms-henglu/starlark"
+    }
+  }
+}
+
+provider "starlark" {}
+
+output "calculation" {
+  value = provider::starlark::eval(
+    "result = a + b",
+    { a = 10, b = 20 }
+  )
+}
+# Output: 30
+```
+
+### Advanced Usage
+
+```terraform
+output "logic" {
+  value = provider::starlark::eval(
+    <<-EOT
+    def compute(val):
+      if val > 100:
+        return "high"
+      return "low"
+    
+    result = compute(v)
+    EOT
+    ,
+    { v = 150 }
+  )
+}
+# Output: "high"
+```
+
+## Functions
+
+*   [eval](docs/functions/eval.md): Executes the provided Starlark script with the given inputs.
 
 ## Requirements
 
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.24
+- [Go](https://golang.org/doc/install) >= 1.25
 
 ## Building The Provider
 
@@ -27,6 +69,22 @@ Once you've written your provider, you'll want to [publish it on the Terraform R
 
 ```shell
 go install
+```
+
+## Developing the Provider
+
+If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
+
+To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
+
+To generate or update documentation, run `go generate`.
+
+In order to run the full suite of Acceptance tests, run `make testacc`.
+
+*Note:* Acceptance tests create real resources, and often cost money to run.
+
+```shell
+make testacc
 ```
 
 ## Adding Dependencies
@@ -42,23 +100,3 @@ go mod tidy
 ```
 
 Then commit the changes to `go.mod` and `go.sum`.
-
-## Using the provider
-
-Fill this in for each provider
-
-## Developing the Provider
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
-
-To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
-
-To generate or update documentation, run `make generate`.
-
-In order to run the full suite of Acceptance tests, run `make testacc`.
-
-*Note:* Acceptance tests create real resources, and often cost money to run.
-
-```shell
-make testacc
-```
