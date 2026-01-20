@@ -2,8 +2,6 @@ terraform {
   required_providers {
     starlark = {
       source = "ms-henglu/starlark"
-      version = "0.19.1"
-      # source = "hashicorp/scaffolding" # for local dev
     }
   }
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.starlark.net/starlark"
+	"go.starlark.net/syntax"
 )
 
 // Ensure the implementation satisfies the interface.
@@ -98,7 +99,7 @@ func (f Eval) Run(ctx context.Context, req function.RunRequest, resp *function.R
 	// As a fallback/alternative, if the script is a single expression, Eval calls might be appropriate, but scripts are usually multiple lines.
 	// We will look for a global variable named "result".
 
-	scriptGlobals, err := starlark.ExecFile(thread, "script.star", script, globals)
+	scriptGlobals, err := starlark.ExecFileOptions(new(syntax.FileOptions), thread, "script.star", script, globals)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("starlark execution failed: %s", err))
 		return
@@ -111,7 +112,7 @@ func (f Eval) Run(ctx context.Context, req function.RunRequest, resp *function.R
 		// Let's assume return null is safer if they just did things for side effects (though side effects in a pure function are useless).
 		// Re-reading usage: "Return: result ... usually the value of the last expression or a specific global variable like result"
 		// Since we can't easily get the last expression value from ExecFile, checking for "result" is the most robust contract.
-		resp.Result.Set(ctx, types.DynamicNull())
+		resp.Error = resp.Result.Set(ctx, types.DynamicNull())
 		return
 	}
 
@@ -123,7 +124,7 @@ func (f Eval) Run(ctx context.Context, req function.RunRequest, resp *function.R
 	}
 
 	tfVal = types.DynamicValue(tfVal)
-	resp.Result.Set(ctx, tfVal)
+	resp.Error = resp.Result.Set(ctx, tfVal)
 }
 
 // attrValueToStarlark converts a Terraform attr.Value (including Dynamic) to a Starlark value.
@@ -186,7 +187,9 @@ func mapToStarlarkDict(ctx context.Context, elements map[string]attr.Value) (*st
 		if err != nil {
 			return nil, err
 		}
-		dict.SetKey(starlark.String(k), conv)
+		if err := dict.SetKey(starlark.String(k), conv); err != nil {
+			return nil, err
+		}
 	}
 	return dict, nil
 }

@@ -30,14 +30,14 @@ output "conditional_logic" {
 # Output: "Client Error"
 
 output "list_filtering" {
-    value = provider::starlark::eval(
-        <<-EOT
+  value = provider::starlark::eval(
+    <<-EOT
         numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         evens = [x for x in numbers if x % 2 == 0]
         result = evens
         EOT
-        ,
-        {} # No inputs needed
-    )
+    ,
+    {} # No inputs needed
+  )
 }
 # Output: [2, 4, 6, 8, 10]

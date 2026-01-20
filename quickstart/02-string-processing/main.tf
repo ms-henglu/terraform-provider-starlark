@@ -26,9 +26,9 @@ output "split_join" {
 # Output: "apple - banana - cherry"
 
 output "formatting" {
-    value = provider::starlark::eval(
-        "'Hello {}'.format(name)",
-        { name = "Terraform" }
-    )
+  value = provider::starlark::eval(
+    "'Hello {}'.format(name)",
+    { name = "Terraform" }
+  )
 }
 # Output: "Hello Terraform"
