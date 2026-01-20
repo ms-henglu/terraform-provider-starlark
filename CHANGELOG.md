@@ -1,3 +1,9 @@
+## 0.1.1
+
+NOTES:
+
+* Bump actions/setup-go from 6.1.0 to 6.2.0.
+
 ## 0.1.0
 
 FEATURES:
