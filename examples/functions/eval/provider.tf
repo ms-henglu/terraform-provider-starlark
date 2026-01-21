@@ -89,7 +89,7 @@ output "date_val" {
       s = rem % 60
       
       y = 1970
-      # Starlark has no while loop, use a sufficient range
+      # Use a sufficient range for leap year calculation
       for i in range(1970, 3000):
         d_in_y = 366 if is_leap(i) else 365
         if days < d_in_y:

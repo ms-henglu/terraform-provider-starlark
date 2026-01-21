@@ -109,7 +109,7 @@ eval(script string, inputs dynamic) dynamic
 
 *   **Reusable Logic**: Define scripts in `locals` blocks to improve readability and reusability, especially for non-trivial logic.
 *   **Result Variable**: Always assign your return value to a global variable named `result`.
-*   **No Loops**: Starlark dialects typically do not support `while` loops (to ensure termination). Use `for` loops with finite ranges instead.
+*   **Loops**: This provider enables `while` loops and recursion, allowing for more complex control flow than standard Starlark dialects which often disable them.
 *   **Deterministic Execution**: Starlark is designed to be deterministic. Avoid operations that rely on external state or randomness if not explicitly supported.
 *   **Inputs**: Pass Terraform variables via the `inputs` map rather than interpolating them directly into the script string. This avoids syntax errors and injection issues.
 

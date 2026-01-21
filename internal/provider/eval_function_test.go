@@ -357,3 +357,68 @@ func TestAccEvalFunction_parse_cidr(t *testing.T) {
 		},
 	})
 }
+
+func TestAccEvalFunction_recursion(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_8_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				output "factorial" {
+					value = provider::starlark::eval(
+						<<-EOT
+						def factorial(n):
+							if n == 0:
+								return 1
+							return n * factorial(n - 1)
+						
+						result = factorial(5)
+						EOT
+						,
+						{}
+					)
+				}
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckOutput("factorial", "120"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccEvalFunction_while_loop(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_8_0),
+		},
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				output "loop_result" {
+					value = provider::starlark::eval(
+						<<-EOT
+						def run_loop():
+							x = 0
+							while x < 10:
+								x = x + 1
+							return x
+						
+						result = run_loop()
+						EOT
+						,
+						{}
+					)
+				}
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckOutput("loop_result", "10"),
+				),
+			},
+		},
+	})
+}

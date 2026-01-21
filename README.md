@@ -4,7 +4,7 @@ The `starlark` provider offers a set of functions that allow you to execute [Sta
 
 ## Features
 
-* **Starlark Execution**: Inspect and control data flow with Python-like syntax using the `eval` function.
+* **Starlark Execution**: Inspect and control data flow with Python-like syntax (including loops and recursion) using the `eval` function.
 * **Deterministic**: Operations are deterministic and side-effect free, ideal for Infrastructure-as-Code.
 * **Zero Dependencies**: Simply include the script in your configuration or load it from a file.
 
