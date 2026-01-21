@@ -43,10 +43,10 @@ output "logic" {
         return "high"
       return "low"
     
-    result = compute(v)
+    result = compute(val)
     EOT
     ,
-    { v = 150 }
+    { val = 150 }
   )
 }
 # Output: "high"
