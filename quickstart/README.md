@@ -11,3 +11,5 @@ This directory contains a set of quickstart examples to help you get started wit
 *   [05-datetime-to-epoch](./05-datetime-to-epoch): Converts an ISO 8601 date string to a Unix timestamp.
 *   [06-datetime-from-epoch](./06-datetime-from-epoch): Converts a Unix timestamp to an ISO 8601 date string.
 *   [07-parse-cidr](./07-parse-cidr): Parses a CIDR string into network details.
+*   [08-deep-merge](./08-deep-merge): Implements a recursive deep merge for maps.
+*   [09-while-loop](./09-while-loop): Demonstrates using `while` loops for algorithms like Fibonacci.

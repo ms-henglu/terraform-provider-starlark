@@ -1,3 +1,9 @@
+## 0.2.0
+
+FEATURES:
+
+* **Feature:** Enabled `while` loops and recursion in Starlark evaluation.
+
 ## 0.1.1
 
 NOTES:

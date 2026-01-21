@@ -99,7 +99,7 @@ func (f Eval) Run(ctx context.Context, req function.RunRequest, resp *function.R
 	// As a fallback/alternative, if the script is a single expression, Eval calls might be appropriate, but scripts are usually multiple lines.
 	// We will look for a global variable named "result".
 
-	scriptGlobals, err := starlark.ExecFileOptions(new(syntax.FileOptions), thread, "script.star", script, globals)
+	scriptGlobals, err := starlark.ExecFileOptions(&syntax.FileOptions{Recursion: true, While: true}, thread, "script.star", script, globals)
 	if err != nil {
 		resp.Error = function.NewFuncError(fmt.Sprintf("starlark execution failed: %s", err))
 		return
